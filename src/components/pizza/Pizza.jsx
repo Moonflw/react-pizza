@@ -1,16 +1,16 @@
 import { useState } from "react";
 const Pizza = ({ id, title, price, imageUrl, sizes, types }) => {
   const typeNames = ["тонкое", "традиционное"];
-  const [activeState, setActiveState] = useState({types: 0, size: 0});
+  const [activeState, setActiveState] = useState({ types: 0, size: 0 });
   const handeClick = (key, value) => {
     setActiveState((prevState) => ({
       ...activeState,
-      [key]: value
-    }))
-  }
-  
+      [key]: value,
+    }));
+  };
+
   return (
-    <>
+    <div className="pizza-block-wrapper">
       <div className="pizza-block">
         <img
           className="pizza-block__image"
@@ -20,18 +20,33 @@ const Pizza = ({ id, title, price, imageUrl, sizes, types }) => {
         <h4 className="pizza-block__title">{title}</h4>
         <div className="pizza-block__selector">
           <ul>
-            {types && types.map((type, i) => (<li className={activeState.types === type ? "active" : ""} onClick={() => handeClick('types', type)}>{typeNames[type]}</li>))}
+            {types &&
+              types.map((type, i) => (
+                <li
+                  className={activeState.types === type ? "active" : ""}
+                  onClick={() => handeClick("types", type)}
+                  key={i}
+                >
+                  {typeNames[type]}
+                </li>
+              ))}
           </ul>
           <ul>
-            { sizes && sizes.map((size, i) => (<li className={activeState.size === i ? "active" : ""} onClick={()=>(handeClick('size', i))}>{size}</li>))}
+            {sizes &&
+              sizes.map((size, i) => (
+                <li
+                  className={activeState.size === i ? "active" : ""}
+                  onClick={() => handeClick("size", i)}
+                  key={i}
+                >
+                  {size}
+                </li>
+              ))}
           </ul>
         </div>
         <div className="pizza-block__bottom">
           <div className="pizza-block__price">от {price} ₽</div>
-          <button
-            className="button button--outline button--add"
-            
-          >
+          <button className="button button--outline button--add">
             <svg
               width="12"
               height="12"
@@ -49,7 +64,7 @@ const Pizza = ({ id, title, price, imageUrl, sizes, types }) => {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
