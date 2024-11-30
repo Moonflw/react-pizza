@@ -1,4 +1,4 @@
-import { useState } from "react";
+// import { useState } from "react";
 const Categories = ({ value, onClickCategory }) => {
   // const [activeIndex, setActiveIndex] = useState(0);
   // const handeClick = (index, i) => {
