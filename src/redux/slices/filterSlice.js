@@ -9,16 +9,18 @@ const initialState = {
 };
 
 export const filterSlice = createSlice({
-  name: "filter",
+  name: "filters",
   initialState,
   reducers: {
     setCategoryId(state, action) {
-        console.log("action.payload", action.payload);
-        state.categoryId = action.payload
+        state.categoryId = action.payload;
     },
+    setSort(state, action) {
+      state.sort = action.payload;
+    }
   },
 });
 
-export const { setCategoryId } = filterSlice.actions;
+export const { setCategoryId, setSort } = filterSlice.actions;
 
 export default filterSlice.reducer;

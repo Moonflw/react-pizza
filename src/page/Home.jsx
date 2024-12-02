@@ -11,7 +11,9 @@ import { useEffect, useState, useContext } from "react";
 
 const Home = () => {
 
-  const categoryId = useSelector(state => state.filterSlice.categoryId);
+  const {categoryId, sort} = useSelector(state => state.filterSlice);
+
+
   const dispatch = useDispatch();
   
 
@@ -28,9 +30,9 @@ const Home = () => {
 
   useEffect(() => {
     setIsLoading(true);
+    const sortBy = sort.sortProperty.replace("-", "");
+    const order = sort.sortProperty.includes("-") ? "asc" : "desc";
     const category = categoryId !== 0 ? `category=${categoryId}` : "";
-    const sortBy = sortType.sort.replace("-", "");
-    const order = sortType.sort.includes("-") ? "asc" : "desc";
     const search = searctValue ? `&search=${searctValue}` : '';
     fetch(
       `https://673f48dba9bc276ec4b7fa6a.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`
@@ -41,7 +43,7 @@ const Home = () => {
         setIsLoading(false);
       });
     window.scrollTo(0, 0);
-  }, [categoryId, sortType, searctValue, currentPage]);
+  }, [categoryId, sort, searctValue, currentPage]);
 
   const pizzas = Array.isArray(items) ? items.map((item) => <Pizza key={item.id} {...item} />): [] ;
   const skeletons = [...new Array(6)].map((_, index) => (
