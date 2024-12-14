@@ -17,7 +17,6 @@ import qs from "qs";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  console.log(sortlist);
 
   const { categoryId, sort, currentPage } = useSelector(
     (state) => state.filterSlice
@@ -113,7 +112,7 @@ const Home = () => {
           value={categoryId}
           onClickCategory={(i) => onClickCategory(i)}
         />
-        <Sort />
+        <Sort />        
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">{isLoading ? skeletons : pizzas}</div>

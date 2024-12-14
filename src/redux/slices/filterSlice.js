@@ -4,7 +4,7 @@ const initialState = {
   searchValue: '',
   categoryId: 0,
   currentPage: 1,
-  sort: {
+  sort: { 
     name: 'популярности',
     sortProperty: 'rating',
   },

@@ -1,7 +1,29 @@
 import { useState } from "react";
-const Pizza = ({ id, title, price, imageUrl, sizes, types }) => {
+import { useSelector, useDispatch } from "react-redux";
+import { addItem } from "../../redux/slices/cartSlice";
+const imageUrl = "https://dodopizza-a.akamaihd.net/static/Img/Products/Pizza/ru-RU/b750f576-4a83-48e6-a283-5a8efb68c35d.jpg"
+const Pizza = ({ id, title, price,  sizes, types, }) => {
+  const dispatch = useDispatch();
+  const cartItem = useSelector(
+    (state) => state.cart.items.find((obj) => obj.id === id)
+  );
   const typeNames = ["тонкое", "традиционное"];
   const [activeState, setActiveState] = useState({ types: 0, size: 0 });
+
+  const addedCount = cartItem ? cartItem.count : 0;
+  const onClickAdd = () => {
+    const item = {
+      id,
+      title,
+      price,
+      imageUrl,
+      type: typeNames[activeState.types],
+      size: sizes[activeState.size],
+      count: addedCount,
+    };
+
+    dispatch(addItem(item));
+  };
   const handeClick = (key, value) => {
     setActiveState((prevState) => ({
       ...activeState,
@@ -14,7 +36,7 @@ const Pizza = ({ id, title, price, imageUrl, sizes, types }) => {
       <div className="pizza-block">
         <img
           className="pizza-block__image"
-          src="https://dodopizza-a.akamaihd.net/static/Img/Products/Pizza/ru-RU/b750f576-4a83-48e6-a283-5a8efb68c35d.jpg"
+          src={imageUrl}
           alt={title}
         />
         <h4 className="pizza-block__title">{title}</h4>
@@ -46,7 +68,10 @@ const Pizza = ({ id, title, price, imageUrl, sizes, types }) => {
         </div>
         <div className="pizza-block__bottom">
           <div className="pizza-block__price">от {price} ₽</div>
-          <button className="button button--outline button--add">
+          <button
+            onClick={onClickAdd}
+            className="button button--outline button--add"
+          >
             <svg
               width="12"
               height="12"
@@ -60,7 +85,7 @@ const Pizza = ({ id, title, price, imageUrl, sizes, types }) => {
               ></path>
             </svg>
             <span>Добавить</span>
-            <i>0</i>
+            {addedCount > 0 && <i>{cartItem.count}</i>}
           </button>
         </div>
       </div>
