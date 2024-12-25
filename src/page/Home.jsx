@@ -1,35 +1,30 @@
-import { SearchContext } from "../App";
-import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import Categories from "../components/cetegories/Categories";
 import Pagination from "../components/Pagination";
 import Pizza from "../components/pizza/Pizza";
 import Skeleton from "../components/pizza/skeleton";
 import Sort, { sortlist } from "../components/sort/Sort";
-// import  {list} from "../components/sort/list";
 import {
   setCategoryId,
   setCurrentPageCount,
   setFilters,
 } from "../redux/slices/filterSlice";
+import { fetchPizzas } from "../redux/slices/pizzaSlice";
 import { useEffect, useState, useContext, useRef } from "react";
 import qs from "qs";
 import { useNavigate } from "react-router-dom";
-
 const Home = () => {
-
-  const { categoryId, sort, currentPage } = useSelector(
-    (state) => state.filterSlice
-  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isSearch = useRef(false);
   const isMounted = useRef(false);
 
-  const { searctValue } = useContext(SearchContext);
-  const [items, setItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  // const [currentPage, setCurrentPage] = useState(1);
+  const { items, status } = useSelector((state) => state.pizza);
+  const { categoryId, sort, currentPage, searchValue } = useSelector(
+    (state) => state.filterSlice
+  );
+
+
 
   const onClickCategory = (id) => {
     dispatch(setCategoryId(id));
@@ -39,24 +34,23 @@ const Home = () => {
     dispatch(setCurrentPageCount(page));
   };
 
-  const fetchPizzas = () => {
-    setIsLoading(true);
+  const getPizzas = async () => {
     const sortBy = sort.sortProperty.replace("-", "");
     const order = sort.sortProperty.includes("-") ? "asc" : "desc";
     const category = categoryId > 0 ? `category=${categoryId}` : "";
-    const search = searctValue ? `search=${searctValue}` : "";
-
-    axios
-      .get(
-        `https://673f48dba9bc276ec4b7fa6a.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`
-      )
-      .then((res) => {
-        setItems(res.data);
-        setIsLoading(false);
-      });
+    const search = searchValue ? `search=${searchValue}` : "";
+    dispatch(
+      fetchPizzas({
+        sortBy,
+        order,
+        category,
+        search,
+        currentPage,
+      })
+    );
   };
 
-/// если бы первый рендер, и изменили пареметры то сохраняем параметры в URL
+  /// если бы первый рендер, и изменили пареметры то сохраняем параметры в URL
 
   useEffect(() => {
     if (isMounted.current) {
@@ -69,9 +63,9 @@ const Home = () => {
       navigate(`?${queryString}`);
     }
     isMounted.current = true;
-  }, [categoryId, sort, searctValue, currentPage]);
+  }, [categoryId, sort, searchValue, currentPage]);
 
-/// Если был первый рендер, то проверяем URL-параметры и сохраняем в redux
+  /// Если был первый рендер, то проверяем URL-параметры и сохраняем в redux
 
   useEffect(() => {
     if (window.location.search) {
@@ -90,15 +84,12 @@ const Home = () => {
     }
   }, []);
 
-/// Если был первый рендер, то получаем пиццы
+  /// Если был первый рендер, то получаем пиццы
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (!isSearch.current) {
-      fetchPizzas();
-    }
-    isSearch.current = false;
-
-  }, [categoryId, sort, searctValue, currentPage]);
+    getPizzas();
+    // isSearch.current = false;
+  }, [categoryId, sort, searchValue, currentPage]);
 
   const pizzas = items.map((item) => <Pizza key={item.id} {...item} />);
   const skeletons = [...new Array(6)].map((_, index) => (
@@ -112,10 +103,17 @@ const Home = () => {
           value={categoryId}
           onClickCategory={(i) => onClickCategory(i)}
         />
-        <Sort />        
+        <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
-      <div className="content__items">{isLoading ? skeletons : pizzas}</div>
+      {status === "error" ? (
+        <h2 className="content__error">Произошла ошибка</h2>
+      ) : (
+        <div className="content__items">
+          {status === "loading" ? skeletons : pizzas}
+        </div>
+      )}
+
       <Pagination currentPage={currentPage} onChangePage={onChangePage} />
     </div>
   );

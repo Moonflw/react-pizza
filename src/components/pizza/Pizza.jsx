@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addItem } from "../../redux/slices/cartSlice";
-const imageUrl = "https://dodopizza-a.akamaihd.net/static/Img/Products/Pizza/ru-RU/b750f576-4a83-48e6-a283-5a8efb68c35d.jpg"
-const Pizza = ({ id, title, price,  sizes, types, }) => {
+import { selectCartItemById } from "../../redux/slices/pizzaSlice";
+import { Link } from "react-router-dom";
+const Pizza = ({ id, title, price,  sizes, types,imageUrl }) => {
   const dispatch = useDispatch();
-  const cartItem = useSelector(
-    (state) => state.cart.items.find((obj) => obj.id === id)
-  );
+  const cartItem = useSelector(selectCartItemById(id));
   const typeNames = ["тонкое", "традиционное"];
   const [activeState, setActiveState] = useState({ types: 0, size: 0 });
 
@@ -34,6 +33,7 @@ const Pizza = ({ id, title, price,  sizes, types, }) => {
   return (
     <div className="pizza-block-wrapper">
       <div className="pizza-block">
+        <Link to={`/pizza/${id}`}>
         <img
           className="pizza-block__image"
           src={imageUrl}
@@ -66,6 +66,7 @@ const Pizza = ({ id, title, price,  sizes, types, }) => {
               ))}
           </ul>
         </div>
+              </Link>
         <div className="pizza-block__bottom">
           <div className="pizza-block__price">от {price} ₽</div>
           <button
