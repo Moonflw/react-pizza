@@ -1,6 +1,4 @@
-import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Header from "./components/header/Header";
 import Home from "./page/Home";
 import NotFound from "./page/NotFound";
 import FullPizza from "./page/FullPizza";
